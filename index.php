@@ -30,3 +30,31 @@ if (isset($_POST['add'])) {
 }
 
 // UPDATE (Edit book)
+if (isset($_POST['update'])) {
+    $id = $_POST['id'];
+    $title = $_POST['title'];
+    $author = $_POST['author'];
+    $availability = isset($_POST['availability']) ? 1 : 0;
+    $genres = isset($_POST['genres']) ? $_POST['genres'] : '';
+    
+    // Update book
+    $sql = "UPDATE books SET title='$title', author='$author', availability=$availability 
+            WHERE book_id=$id";
+    $conn->query($sql);
+    
+    // Delete existing genres
+    $sql = "DELETE FROM genres WHERE book_id=$id";
+    $conn->query($sql);
+    
+    // Insert updated genres
+    if (!empty($genres)) {
+        $genre_list = explode(",", $genres);
+        foreach ($genre_list as $genre) {
+            $genre = trim($genre);
+            if (!empty($genre)) {
+                $sql = "INSERT INTO genres (book_id, genre) VALUES ($id, '$genre')";
+                $conn->query($sql);
+            }
+        }
+    }
+}
