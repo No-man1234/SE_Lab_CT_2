@@ -58,3 +58,25 @@ if (isset($_POST['update'])) {
         }
     }
 }
+
+// DELETE (Remove book)
+if (isset($_GET['delete'])) {
+    $id = $_GET['delete'];
+    // Delete genre first (beacuse of foreign key)
+    $sql = "DELETE FROM genres WHERE book_id=$id";
+    $conn->query($sql);
+    // agter that delete the book
+    $sql = "DELETE FROM books WHERE book_id=$id";
+    $conn->query($sql);
+}
+//filter
+$filter_sql = "SELECT DISTINCT b.book_id, b.title, b.author, b.availability, b.created_at 
+               FROM books b LEFT JOIN genres g ON b.book_id = g.book_id";
+
+if (isset($_GET['genre']) && !empty($_GET['genre'])) {
+    $genre = $_GET['genre'];
+    $filter_sql = "SELECT DISTINCT b.book_id, b.title, b.author, b.availability, b.created_at 
+                  FROM books b JOIN genres g ON b.book_id = g.book_id 
+                  WHERE g.genre = '$genre'";
+}
+?>
